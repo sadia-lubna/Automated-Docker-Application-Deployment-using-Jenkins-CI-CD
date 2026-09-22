@@ -1,0 +1,55 @@
+services:
+
+  catalogue:
+    build:
+      context: /home/lubba/workspace/projects/craftista/catalogue
+      dockerfile: /home/lubba/workspace/projects/devops-docker-jenkins-cicd/Automated-Docker-Application-Deployment-using-Jenkins-CI-CD/Dockerfiles/catalogue.Dockerfile
+    image: craftista-catalogue:1.0
+    container_name: craftista-catalogue
+    ports:
+      - "5000:5000"
+    networks:
+      - craftista-network
+
+  recco:
+    build:
+      context: /home/lubba/workspace/projects/craftista/recommendation
+      dockerfile: /home/lubba/workspace/projects/devops-docker-jenkins-cicd/Automated-Docker-Application-Deployment-using-Jenkins-CI-CD/Dockerfiles/recommendation.Dockerfile
+    image: craftista-recommendation:1.0
+    container_name: craftista-recommendation
+    ports:
+      - "8081:8080"
+    networks:
+      - craftista-network
+
+  voting:
+    build:
+      context: /home/lubba/workspace/projects/craftista/voting
+      dockerfile: /home/lubba/workspace/projects/devops-docker-jenkins-cicd/Automated-Docker-Application-Deployment-using-Jenkins-CI-CD/Dockerfiles/voting.Dockerfile
+    image: craftista-voting:1.0
+    container_name: craftista-voting
+    ports:
+      - "8082:8080"
+    depends_on:
+      - catalogue
+    networks:
+      - craftista-network
+
+  frontend:
+    build:
+      context: /home/lubba/workspace/projects/craftista/frontend
+      dockerfile: /home/lubba/workspace/projects/devops-docker-jenkins-cicd/Automated-Docker-Application-Deployment-using-Jenkins-CI-CD/Dockerfiles/frontend.Dockerfile
+    image: craftista-frontend:1.0
+    container_name: craftista-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - catalogue
+      - recco
+      - voting
+    networks:
+      - craftista-network
+
+networks:
+  craftista-network:
+    driver: bridge
